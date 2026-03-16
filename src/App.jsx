@@ -2,77 +2,56 @@ import { useState, useRef } from "react";
 
 // ── BRAND TOKENS ────────────────────────────────────────────────────────────
 const B = {
-  navy:      "#0d1f3c",
-  navyLight: "#1a3460",
-  gold:      "#c9a84c",
-  goldLight: "#e8c060",
-  goldDim:   "#a07428",
-  goldBg:    "#fdf6e3",
-  white:     "#ffffff",
-  offWhite:  "#f8f6f0",
-  steel:     "#8899bb",
-  steelBg:   "#eef1f8",
-  border:    "#e8e0cc",
-  ink:       "#0d1f3c",
-  inkLight:  "#6b7a99",
-  danger:    "#c0392b",
-  dangerBg:  "#fdecea",
-  success:   "#2d6a4f",
-  successBg: "#eaf4ee",
-  blue:      "#1a5276",
-  blueBg:    "#eaf1f8",
-  tag:       "#f0ece4",
+  // NovusIn — Dark & Sleek
+  navy:      "#0f1117",
+  navyLight: "#161b25",
+  gold:      "#10b981",
+  goldLight: "#34d399",
+  goldDim:   "#059669",
+  goldBg:    "#0d2818",
+  white:     "#f1f5f9",
+  offWhite:  "#1e2530",
+  steel:     "#64748b",
+  steelBg:   "#1a2035",
+  border:    "#1e2d3d",
+  ink:       "#f1f5f9",
+  inkLight:  "#94a3b8",
+  danger:    "#f87171",
+  dangerBg:  "#1f0d0d",
+  success:   "#10b981",
+  successBg: "#0d2818",
+  blue:      "#60a5fa",
+  blueBg:    "#0d1f35",
+  tag:       "#1e2d3d",
 };
 
 // ── LOGO SVG COMPONENT ──────────────────────────────────────────────────────
 function Logo({ size = 36, dark = true }) {
-  const c = dark ? B.gold : B.navy;
-  const houseFill = dark ? B.gold : B.navy;
-  const roofFill  = dark ? B.goldLight : B.navyLight;
-  const bg        = dark ? B.navy : B.offWhite;
-  const s = size / 36;
+  const em = "#10b981";
+  const emFaint = "#10b981";
+  const textCol = dark ? "#0f1117" : "#f1f5f9";
   return (
-    <svg width={size * 2.8} height={size} viewBox="0 0 100 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Coin */}
-      <circle cx="18" cy="18" r="16" fill={B.goldDim}/>
-      <circle cx="18" cy="18" r="14" fill={B.gold}/>
-      <circle cx="18" cy="18" r="10" fill={B.goldLight} opacity="0.35"/>
-      <text x="18" y="23" fontFamily="Georgia, serif" fontSize="12" fontWeight="700" fill={B.navy} textAnchor="middle">$</text>
-      {/* Arrow */}
-      <line x1="35" y1="18" x2="46" y2="18" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
-      <polyline points="42,13 47,18 42,23" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-      {/* House */}
-      <polygon points="58,10 74,1 90,10" fill={roofFill}/>
-      <rect x="61" y="10" width="26" height="20" rx="2" fill={houseFill}/>
-      <rect x="69" y="18" width="8" height="12" rx="1.5" fill={bg}/>
-      <rect x="63" y="13" width="7" height="6" rx="1" fill={bg} opacity="0.5"/>
-      <rect x="82" y="13" width="7" height="6" rx="1" fill={bg} opacity="0.5"/>
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Diamond outline */}
+      <path d="M40 4 L76 40 L40 76 L4 40 Z" fill="none" stroke={em} strokeWidth="2.5" strokeLinejoin="round"/>
+      {/* Inner diamond — subtle fill */}
+      <path d="M40 18 L62 40 L40 62 L18 40 Z" fill={em} opacity="0.1"/>
+      {/* N monogram centered */}
+      <text x="40" y="52" textAnchor="middle" fontFamily="Georgia, 'Times New Roman', serif" fontSize="34" fontWeight="700" fill={em}>N</text>
     </svg>
   );
 }
 
 function LogoIcon({ size = 40, dark = true }) {
-  const bg = dark ? B.navy : B.offWhite;
+  const em = "#10b981";
   return (
-    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="40" height="40" rx="9" fill={bg}/>
-      {/* Coin */}
-      <circle cx="12" cy="22" r="9" fill={B.goldDim}/>
-      <circle cx="12" cy="22" r="8" fill={B.gold}/>
-      <circle cx="12" cy="22" r="6" fill={B.goldLight} opacity="0.3"/>
-      <text x="12" y="26" fontFamily="Georgia, serif" fontSize="7" fontWeight="700" fill={B.navy} textAnchor="middle">$</text>
-      {/* Arrow */}
-      <line x1="22" y1="22" x2="26" y2="22" stroke={B.gold} strokeWidth="1.5" strokeLinecap="round"/>
-      <polyline points="24,19 27,22 24,25" fill="none" stroke={B.gold} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      {/* House */}
-      <polygon points="29,14 36,10 43,14" fill={B.goldLight}/>
-      <rect x="30" y="14" width="14" height="11" rx="1.5" fill={B.gold}/>
-      <rect x="34" y="18" width="5" height="7" rx="1" fill={bg}/>
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M40 4 L76 40 L40 76 L4 40 Z" fill="none" stroke={em} strokeWidth="2.5" strokeLinejoin="round"/>
+      <path d="M40 18 L62 40 L40 62 L18 40 Z" fill={em} opacity="0.1"/>
+      <text x="40" y="52" textAnchor="middle" fontFamily="Georgia, 'Times New Roman', serif" fontSize="34" fontWeight="700" fill={em}>N</text>
     </svg>
   );
 }
-
-// ── REGIONS ─────────────────────────────────────────────────────────────────
 const REGIONS = [
   {
     id:"us", flag:"🇺🇸", name:"United States", currency:"USD", symbol:"$", locale:"en-US",
@@ -257,7 +236,7 @@ function Ring({pct, color, size=76}) {
 // ── ONBOARDING ───────────────────────────────────────────────────────────────
 function Onboarding({onSelect}) {
   return (
-    <div style={{minHeight:"100vh", background:B.navy, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:24, fontFamily:"Georgia, serif"}}>
+    <div style={{minHeight:"100vh", background:"radial-gradient(ellipse at 40% 30%, #0d2818 0%, #0f1117 55%, #080b10 100%)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:24, fontFamily:"Georgia, serif"}}>
       <div style={{maxWidth:420, width:"100%"}}>
 
         {/* Logo */}
@@ -266,10 +245,10 @@ function Onboarding({onSelect}) {
             <LogoIcon size={72} dark={true}/>
           </div>
           <div style={{fontSize:32, fontWeight:700, color:B.white, letterSpacing:"-0.5px"}}>
-            Invest<span style={{color:B.gold, fontWeight:400}}>Wise</span>
+            Novus<span style={{color:B.gold, fontWeight:400}}>In</span>
           </div>
-          <div style={{fontSize:11, color:B.gold, textTransform:"uppercase", letterSpacing:"0.15em", fontFamily:"monospace", marginTop:6}}>Goal-Based Financial Planning</div>
-          <div style={{fontSize:13, color:B.steel, marginTop:14, lineHeight:1.7, fontStyle:"italic"}}>"Turn what you earn into what you want."</div>
+          <div style={{fontSize:11, color:B.gold, textTransform:"uppercase", letterSpacing:"0.15em", fontFamily:"monospace", marginTop:6}}>New Investor Coach</div>
+          <div style={{fontSize:13, color:B.steel, marginTop:14, lineHeight:1.7, fontStyle:"italic"}}>"The new investor's coach."</div>
           <div style={{width:40, height:2, background:B.gold, borderRadius:1, margin:"16px auto 0"}}/>
         </div>
 
@@ -291,7 +270,7 @@ function Onboarding({onSelect}) {
         </div>
 
         <div style={{textAlign:"center", fontSize:11, color:B.steel, marginTop:24, lineHeight:1.7}}>
-          ⚠️ Educational tool only · Not financial advice · Always consult a licensed advisor
+          🌱 novusin.com  ·  Educational only  ·  Not financial advice
         </div>
       </div>
     </div>
@@ -300,7 +279,7 @@ function Onboarding({onSelect}) {
 
 const TABS = ["Goals","Plan","Invest","Chat","Learn"];
 
-export default function InvestWise() {
+export default function NovusIn() {
   const [region, setRegion]               = useState(null);
   const [tab, setTab]                     = useState("Goals");
   const [goalType, setGoalType]           = useState("house");
@@ -318,7 +297,7 @@ export default function InvestWise() {
 
   const handleRegionSelect = (r) => {
     setRegion(r);
-    setMessages([{role:"ai", text:`${r.flag} Welcome to **InvestWise**! I'm set up for **${r.name}** — all suggestions use **${r.currency}** and local platforms.\n\n*"Turn what you earn into what you want."*\n\nSet your goal in the Goals tab, then come back to chat!\n\n⚠️ Education only, not licensed financial advice.`}]);
+    setMessages([{role:"ai", text:`${r.flag} Welcome to **NovusIn**! 🌱 I'm set up for **${r.name}** — all suggestions use **${r.currency}** and local platforms.\n\n*"The new investor's coach."*\n\nSet your goal in the Goals tab, then come back to chat!\n\n⚠️ Education only, not licensed financial advice.`}]);
   };
 
   if (!region) return <Onboarding onSelect={handleRegionSelect}/>;
@@ -368,12 +347,12 @@ export default function InvestWise() {
     .replace(/\n/g,"<br/>");
 
   // ── SHARED STYLES ──
-  const cardStyle = {background:B.white, borderRadius:14, padding:18, border:`1px solid ${B.border}`};
+  const cardStyle = {background:B.navyLight, borderRadius:14, padding:18, border:`1px solid ${B.border}`};
   const labelStyle = {fontSize:12, color:B.inkLight, textTransform:"uppercase", letterSpacing:"0.08em", fontFamily:"monospace"};
-  const goldInput = (accentColor) => ({display:"flex", alignItems:"center", borderRadius:10, border:`1.5px solid ${accentColor}`, overflow:"hidden", background:B.offWhite});
+  const goldInput = (accentColor) => ({display:"flex", alignItems:"center", borderRadius:10, border:`1.5px solid ${accentColor}`, overflow:"hidden", background:B.steelBg});
 
   return (
-    <div style={{fontFamily:"Georgia, 'Times New Roman', serif", background:B.offWhite, minHeight:"100vh", color:B.ink, maxWidth:500, margin:"0 auto", display:"flex", flexDirection:"column"}}>
+    <div style={{fontFamily:"Georgia, 'Times New Roman', serif", background:B.navy, minHeight:"100vh", color:B.ink, maxWidth:500, margin:"0 auto", display:"flex", flexDirection:"column"}}>
 
       {/* ── HEADER ── */}
       <div style={{padding:"14px 18px", background:B.navy, display:"flex", alignItems:"center", justifyContent:"space-between"}}>
@@ -381,9 +360,9 @@ export default function InvestWise() {
           <LogoIcon size={32} dark={true}/>
           <div>
             <div style={{fontSize:18, fontWeight:700, color:B.white, letterSpacing:"-0.5px"}}>
-              Invest<span style={{color:B.gold, fontWeight:400}}>Wise</span>
+              Novus<span style={{color:B.gold, fontWeight:400}}>In</span>
             </div>
-            <div style={{fontSize:9, color:B.steel, letterSpacing:"0.12em", textTransform:"uppercase", fontFamily:"monospace"}}>Goal-Based Financial Planning</div>
+            <div style={{fontSize:9, color:B.steel, letterSpacing:"0.12em", textTransform:"uppercase", fontFamily:"monospace"}}>New Investor Coach</div>
           </div>
         </div>
         <button onClick={()=>setRegion(null)} style={{display:"flex", alignItems:"center", gap:6, padding:"6px 12px", borderRadius:20, border:`1px solid ${B.navyLight}`, background:B.navyLight, cursor:"pointer", fontSize:12, color:B.steel, fontFamily:"inherit"}}>
@@ -411,7 +390,7 @@ export default function InvestWise() {
 
             <div style={{display:"flex", flexDirection:"column", gap:8}}>
               {GOAL_PRESETS.map(p=>(
-                <button key={p.id} onClick={()=>{setGoalType(p.id);setGoalName(p.label);setFullPrice(p.defaultPrice);}} style={{padding:"13px 15px", borderRadius:12, border:`1.5px solid ${goalType===p.id?p.color:B.border}`, background:goalType===p.id?p.colorBg:B.white, cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:12, fontFamily:"inherit"}}>
+                <button key={p.id} onClick={()=>{setGoalType(p.id);setGoalName(p.label);setFullPrice(p.defaultPrice);}} style={{padding:"13px 15px", borderRadius:12, border:`1.5px solid ${goalType===p.id?p.color:B.border}`, background:goalType===p.id?p.colorBg:B.navyLight, cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:12, fontFamily:"inherit"}}>
                   <span style={{fontSize:22}}>{p.emoji}</span>
                   <div style={{flex:1}}>
                     <div style={{fontSize:14, fontWeight:600, color:goalType===p.id?p.color:B.ink}}>{p.label}</div>
@@ -430,7 +409,7 @@ export default function InvestWise() {
               {goalType==="custom" && (
                 <div style={{marginBottom:14}}>
                   <label style={{fontSize:12, color:B.inkLight, display:"block", marginBottom:5}}>Goal Name</label>
-                  <input value={goalName} onChange={e=>setGoalName(e.target.value)} style={{width:"100%", padding:"9px 12px", borderRadius:8, border:`1px solid ${B.border}`, fontSize:14, fontFamily:"inherit", color:B.ink, background:B.offWhite, boxSizing:"border-box", outline:"none"}}/>
+                  <input value={goalName} onChange={e=>setGoalName(e.target.value)} style={{width:"100%", padding:"9px 12px", borderRadius:8, border:`1px solid ${B.border}`, fontSize:14, fontFamily:"inherit", color:B.ink, background:B.steelBg, boxSizing:"border-box", outline:"none"}}/>
                 </div>
               )}
 
@@ -692,24 +671,24 @@ export default function InvestWise() {
             <div style={{flex:1, overflowY:"auto", padding:14, display:"flex", flexDirection:"column", gap:12}}>
               {messages.map((msg,i)=>(
                 <div key={i} style={{display:"flex", justifyContent:msg.role==="user"?"flex-end":"flex-start"}}>
-                  <div style={{maxWidth:"86%", padding:"11px 13px", borderRadius:msg.role==="user"?"18px 18px 4px 18px":"18px 18px 18px 4px", background:msg.role==="user"?B.navy:B.white, border:msg.role==="ai"?`1px solid ${B.border}`:"none", color:msg.role==="user"?B.white:B.ink, fontSize:14, lineHeight:1.65}}
+                  <div style={{maxWidth:"86%", padding:"11px 13px", borderRadius:msg.role==="user"?"18px 18px 4px 18px":"18px 18px 18px 4px", background:msg.role==="user"?B.goldDim:B.navyLight, border:msg.role==="ai"?`1px solid ${B.border}`:"none", color:msg.role==="user"?B.white:B.ink, fontSize:14, lineHeight:1.65}}
                     dangerouslySetInnerHTML={{__html:renderMd(msg.text)}}/>
                 </div>
               ))}
               {typing && (
-                <div style={{display:"flex", gap:5, padding:"11px 13px", background:B.white, border:`1px solid ${B.border}`, borderRadius:"18px 18px 18px 4px", width:"fit-content"}}>
+                <div style={{display:"flex", gap:5, padding:"11px 13px", background:B.navyLight, border:`1px solid ${B.border}`, borderRadius:"18px 18px 18px 4px", width:"fit-content"}}>
                   {[0,1,2].map(i=><div key={i} style={{width:7, height:7, borderRadius:"50%", background:B.gold, animation:`dot 1s ${i*0.2}s infinite`}}/>)}
                 </div>
               )}
               <div ref={chatEndRef}/>
             </div>
-            <div style={{padding:"7px 12px", display:"flex", gap:6, overflowX:"auto", borderTop:`1px solid ${B.border}`, background:B.white}}>
+            <div style={{padding:"7px 12px", display:"flex", gap:6, overflowX:"auto", borderTop:`1px solid ${B.border}`, background:B.navyLight}}>
               {["What platforms should I use?","How do I pay off debt?","Best tax accounts?","This feels impossible"].map(q=>(
-                <button key={q} onClick={()=>setChatInput(q)} style={{padding:"5px 11px", borderRadius:20, border:`1px solid ${B.border}`, background:B.offWhite, fontSize:11, color:B.inkLight, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit"}}>{q}</button>
+                <button key={q} onClick={()=>setChatInput(q)} style={{padding:"5px 11px", borderRadius:20, border:`1px solid ${B.border}`, background:B.steelBg, fontSize:11, color:B.inkLight, cursor:"pointer", whiteSpace:"nowrap", fontFamily:"inherit"}}>{q}</button>
               ))}
             </div>
-            <div style={{padding:"10px 14px", borderTop:`1px solid ${B.border}`, display:"flex", gap:8, background:B.white}}>
-              <input value={chatInput} onChange={e=>setChatInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sendChat()} placeholder={`Ask about investing in ${region.name}...`} style={{flex:1, padding:"9px 13px", borderRadius:24, border:`1px solid ${B.border}`, fontSize:14, fontFamily:"inherit", color:B.ink, background:B.offWhite, outline:"none"}}/>
+            <div style={{padding:"10px 14px", borderTop:`1px solid ${B.border}`, display:"flex", gap:8, background:B.navyLight}}>
+              <input value={chatInput} onChange={e=>setChatInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&sendChat()} placeholder={`Ask about investing in ${region.name}...`} style={{flex:1, padding:"9px 13px", borderRadius:24, border:`1px solid ${B.border}`, fontSize:14, fontFamily:"inherit", color:B.ink, background:B.steelBg, outline:"none"}}/>
               <button onClick={sendChat} style={{width:38, height:38, borderRadius:"50%", background:B.navy, border:"none", cursor:"pointer", fontSize:15, color:B.gold}}>➤</button>
             </div>
           </div>
