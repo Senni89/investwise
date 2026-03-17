@@ -373,19 +373,17 @@ Your rules:
 8. If asked about projections, calculate using their actual monthly budget of ${fmt(monthlyBudget)}/month`;
 
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
           system: systemPrompt,
           messages: claudeMessages
         })
       });
 
       const data = await response.json();
-      const aiText = data.content?.[0]?.text || "Sorry, I couldn't process that. Please try again!";
+      const aiText = data.text || "Sorry, I couldn't process that. Please try again!";
       setTyping(false);
       setMessages(m=>[...m, {role:"ai", text:aiText}]);
     } catch (err) {
