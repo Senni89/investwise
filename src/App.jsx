@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 // ── BRAND TOKENS ────────────────────────────────────────────────────────────
 const B = {
@@ -126,7 +126,7 @@ const REGIONS = [
       {name:"eToro", note:"Available in AU. Wide asset selection.", star:false},
     ],
     funds:{
-      short:[{ticker:"HYSA",name:"ING / UBank Savings (5%+)",pct:70,rate:5.0,risk:"Very Low",why:"Government guaranteed up to AUD 250,000."},{ticker:"IAF",name:"iShares Core Composite Bond ETF",pct:30,rate:4.3,risk:"Low",why:"Australian bond exposure."}],
+      short:[{ticker:"HYSA",name:"ING / UBank Savings (5%+)",pct:70,rate:5.0,risk:"Very Low",why:"Government historically observed up to AUD 250,000."},{ticker:"IAF",name:"iShares Core Composite Bond ETF",pct:30,rate:4.3,risk:"Low",why:"Australian bond exposure."}],
       moderate:[{ticker:"VGS",name:"Vanguard MSCI Index International",pct:50,rate:10.2,risk:"Medium",why:"Most popular ETF for Australians."},{ticker:"VAS",name:"Vanguard Australian Shares ETF",pct:30,rate:9.5,risk:"Medium",why:"Local ASX 300 + franking credits."},{ticker:"IAF",name:"iShares Core Composite Bond",pct:20,rate:4.3,risk:"Low",why:"Stability component."}],
       conservative:[{ticker:"IAF",name:"iShares Core Composite Bond",pct:40,rate:4.3,risk:"Low",why:"Stable core."},{ticker:"VGS",name:"Vanguard MSCI International",pct:35,rate:10.2,risk:"Medium",why:"Global growth."},{ticker:"VAS",name:"Vanguard Australian Shares",pct:25,rate:9.5,risk:"Medium",why:"Local exposure with franking."}],
       aggressive:[{ticker:"NDQ",name:"BetaShares Nasdaq 100 ETF",pct:40,rate:13.2,risk:"Med-High",why:"Tech growth, ASX-listed."},{ticker:"VGS",name:"Vanguard MSCI International",pct:35,rate:10.2,risk:"Medium",why:"Global diversification."},{ticker:"VAS",name:"Vanguard Australian Shares",pct:25,rate:9.5,risk:"Medium",why:"Local market exposure."}],
@@ -194,20 +194,20 @@ const getAIReply = (msg, ctx, region) => {
   if (m.includes("motivat") || m.includes("hard") || m.includes("impossible") || m.includes("give up"))
     return `💪 Balancing a full-time job and saving is genuinely hard.\n\n**Most people never start because it feels overwhelming.** You already did the hardest part.\n\nEven saving ${sym}${ctx.monthly||200}/month puts you ahead of most people. Progress beats perfection every single time.\n\n🎯 Focus on your next 30 days, not the full timeline.`;
   if (m.includes("etoro") || m.includes("platform") || m.includes("broker"))
-    return `📱 **Best platforms for ${region.name}:**\n\n${region.platforms.map(p=>`${p.star?"⭐":"•"} **${p.name}** — ${p.note}`).join("\n")}\n\n${region.taxNote}\n\n⚠️ Educational info only, not financial advice.`;
+    return `📱 **Best platforms for ${region.name}:**\n\n${region.platforms.map(p=>`${p.star?"⭐":"•"} **${p.name}** — ${p.note}`).join("\n")}\n\n${region.taxNote}\n\n⚠️ For education only — not financial advice.`;
   if (m.includes("tax") || m.includes("isa") || m.includes("tfsa") || m.includes("roth") || m.includes("super"))
     return `🏦 **Tax-advantaged accounts for ${region.name}:**\n\n${region.taxNote}\n\nUsing the right account wrapper can save you significant money in taxes over time.\n\n⚠️ Consult a local tax advisor for your specific situation.`;
   if (m.includes("debt") || m.includes("loan") || m.includes("credit card"))
-    return `⛓️ **Paying off debt first is often the smartest move:**\n\nHigh-interest debt costs more than investing earns.\n\n**Recommended order:**\n1. Minimum payments on all debts\n2. Build ${sym}1,000 starter emergency fund\n3. Attack highest-interest debt first\n4. Once debt-free, redirect to investing\n\n⚠️ Educational info only, not financial advice.`;
+    return `⛓️ **Paying off debt first is often the smartest move:**\n\nHigh-interest debt costs more than investing earns.\n\n**Recommended order:**\n1. Minimum payments on all debts\n2. Build ${sym}1,000 starter emergency fund\n3. Attack highest-interest debt first\n4. Once debt-free, redirect to investing\n\n⚠️ For education only — not financial advice.`;
   if (m.includes("house") || m.includes("mortgage") || m.includes("deposit"))
-    return `🏠 **Saving for a home in ${region.name}:**\n\nTypically need 10-35% deposit plus closing costs.\n\n• Savings account for goals under 3 years\n• Bonds + ETFs for 3+ year timelines\n• Avoid stocks for money needed soon\n\n${region.taxNote}\n\n⚠️ Educational info only, not financial advice.`;
+    return `🏠 **Saving for a home in ${region.name}:**\n\nTypically need 10-35% deposit plus closing costs.\n\n• Savings account for goals under 3 years\n• Bonds + ETFs for 3+ year timelines\n• Avoid stocks for money needed soon\n\n${region.taxNote}\n\n⚠️ For education only — not financial advice.`;
   if (m.includes("car"))
-    return `🚗 **Saving for a car:**\n\nAim for 20% down minimum. Buy used to avoid first-year depreciation.\n\nWhile saving: use a high-yield savings account only.\n\n⚠️ Educational info only, not financial advice.`;
+    return `🚗 **Saving for a car:**\n\nAim for 20% down minimum. Buy used to avoid first-year depreciation.\n\nWhile saving: use a high-yield savings account only.\n\n⚠️ For education only — not financial advice.`;
   if (m.includes("invest") || m.includes("etf") || m.includes("fund"))
-    return `📈 **Investing basics for ${region.name}:**\n\nTop platforms: ${region.platforms.filter(p=>p.star).map(p=>p.name).join(" and ")}\n\nBest starting funds:\n${getSuggestions(5,"moderate",region).map(f=>`• **${f.ticker}** — ${f.name}`).join("\n")}\n\n${region.taxNote}\n\n⚠️ Educational info only, not financial advice.`;
+    return `📈 **Investing basics for ${region.name}:**\n\nTop platforms: ${region.platforms.filter(p=>p.star).map(p=>p.name).join(" and ")}\n\nBest starting funds:\n${getSuggestions(5,"moderate",region).map(f=>`• **${f.ticker}** — ${f.name}`).join("\n")}\n\n${region.taxNote}\n\n⚠️ For education only — not financial advice.`;
   if (m.includes("budget") || m.includes("afford") || m.includes("salary"))
-    return `💰 **The 50/30/20 budget rule:**\n\n• 50% — Needs (rent, food, bills)\n• 30% — Wants (dining out, fun)\n• 20% — Savings & debt payoff\n\nIf 20% feels impossible, start with 5% and increase by 1% every 3 months.\n\n⚠️ Educational info only, not financial advice.`;
-  return `👋 I can help with:\n\n• **Platforms** — "what platforms should I use?"\n• **Tax accounts** — "what tax accounts are available?"\n• **Debt** — "how do I pay off debt?"\n• **House savings** — "how do I save for a house?"\n• **Investing** — "how do I start investing?"\n• **Budgeting** — "how do I afford to save?"\n• **Motivation** — "this feels impossible"\n\n⚠️ Education only, not licensed financial advice.`;
+    return `💰 **The 50/30/20 budget rule:**\n\n• 50% — Needs (rent, food, bills)\n• 30% — Wants (dining out, fun)\n• 20% — Savings & debt payoff\n\nIf 20% feels impossible, start with 5% and increase by 1% every 3 months.\n\n⚠️ For education only — not financial advice.`;
+  return `👋 I can help with:\n\n• **Platforms** — "what platforms should I use?"\n• **Tax accounts** — "what tax accounts are available?"\n• **Debt** — "how do I pay off debt?"\n• **House savings** — "how do I save for a house?"\n• **Investing** — "how do I start investing?"\n• **Budgeting** — "how do I afford to save?"\n• **Motivation** — "this feels impossible"\n\n🌱 Education only · Not financial advice · Always do your own research.`;
 };
 
 function Sparkline({data, color, h=52}) {
@@ -248,7 +248,7 @@ function Onboarding({onSelect}) {
             Novus<span style={{color:B.gold, fontWeight:400}}>In</span><span style={{fontSize:"0.45em", verticalAlign:"super", color:B.steel, fontWeight:400, letterSpacing:0}}>™</span>
           </div>
           <div style={{fontSize:11, color:B.gold, textTransform:"uppercase", letterSpacing:"0.15em", fontFamily:"monospace", marginTop:6}}>New Investor Coach</div>
-          <div style={{fontSize:13, color:B.steel, marginTop:14, lineHeight:1.7, fontStyle:"italic"}}>"The new investor's coach."</div>
+          <div style={{fontSize:13, color:B.steel, marginTop:14, lineHeight:1.7, fontStyle:"italic"}}>"Your guide to smarter investing decisions."</div>
           <div style={{width:40, height:2, background:B.gold, borderRadius:1, margin:"16px auto 0"}}/>
         </div>
 
@@ -297,8 +297,15 @@ export default function NovusIn() {
 
   const handleRegionSelect = (r) => {
     setRegion(r);
-    setMessages([{role:"ai", text:`${r.flag} Welcome to **NovusIn**! 🌱 I'm set up for **${r.name}** — all suggestions use **${r.currency}** and local platforms.\n\n*"The new investor's coach."*\n\nSet your goal in the Goals tab, then come back to chat!\n\n⚠️ Education only, not licensed financial advice.`}]);
+    setMessages([{role:"ai", text:`${r.flag} Welcome to **NovusIn**! 🌱 I'm set up for **${r.name}** — all suggestions use **${r.currency}** and local platforms.\n\n*"Your guide to smarter investing decisions."*\n\nSet your goal in the Goals tab, then come back to chat!\n\n🌱 Education only · Not financial advice · Always do your own research.`}]);
   };
+
+  // Set page title
+  useEffect(() => {
+    document.title = region
+      ? `NovusIn™ · ${region.name}`
+      : "NovusIn™ — Your New Investor Coach";
+  }, [region]);
 
   if (!region) return <Onboarding onSelect={handleRegionSelect}/>;
 
@@ -502,7 +509,7 @@ export default function NovusIn() {
                   ))}
                 </div>
 
-                <div style={{fontSize:11, color:B.steel, marginBottom:14, lineHeight:1.5}}>⚠️ Projections use historical averages. Not a guarantee.</div>
+                <div style={{fontSize:11, color:B.steel, marginBottom:14, lineHeight:1.5}}>⚠️ Projections use historical averages. Past performance ≠ future results.</div>
 
                 <button onClick={()=>setTab("Plan")} style={{width:"100%", padding:"14px", borderRadius:12, background:`linear-gradient(135deg, ${B.gold}, ${B.goldDim})`, border:"none", color:B.navy, fontSize:15, fontWeight:700, cursor:"pointer", fontFamily:"inherit", letterSpacing:"-0.2px"}}>
                   See Full Breakdown →
@@ -539,7 +546,7 @@ export default function NovusIn() {
             <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:10}}>
               {[
                 {label:"Time to goal", value:goalYears<2?`${monthsNeeded} months`:`~${goalYears} years`, sub:`at ${fmt(monthlyBudget)}/month`, color:B.blue},
-                {label:"Projected value", value:fmt(projectedFinal), sub:projectedFinal>=goalAmount?"✅ Goal exceeded!":"Keep going!", color:B.success},
+                {label:"Projected value", value:fmt(projectedFinal), sub:projectedFinal>=goalAmount?"✅ Ahead of schedule! 🌱":"Keep going!", color:B.success},
                 {label:"Still needed", value:fmt(remaining), sub:`${fmt(savedSoFar)} saved so far`, color:remaining>0?B.goldDim:B.success},
                 {label:"Investment gain", value:fmt(Math.max(0,projectedFinal-monthlyBudget*monthsNeeded-savedSoFar)), sub:"from compound growth", color:B.gold},
               ].map((card,i)=>(
@@ -559,14 +566,14 @@ export default function NovusIn() {
                   <div style={{fontSize:12, color:B.inkLight}}>Goal: {fmt(goalAmount)}</div>
                 </div>
                 <div style={{fontSize:12, color:projectedFinal>=goalAmount?B.success:B.danger, textAlign:"right", paddingTop:4}}>
-                  {projectedFinal>=goalAmount?"✅ Goal reached!":`⚠️ ${fmt(goalAmount-projectedFinal)} short`}
+                  {projectedFinal>=goalAmount?"✅ On track! 🌱":`⚠️ ${fmt(goalAmount-projectedFinal)} short`}
                 </div>
               </div>
               <Sparkline data={yearlySamples} color={projectedFinal>=goalAmount?B.gold:B.goldDim} h={64}/>
               <div style={{display:"flex", justifyContent:"space-between", fontSize:11, color:B.inkLight, marginTop:4}}>
                 <span>Now</span><span>{Math.round(goalYears/2)} yr</span><span>{goalYears} yr</span>
               </div>
-              <div style={{fontSize:11, color:B.inkLight, marginTop:6}}>⚠️ Historical averages only. Not a guarantee.</div>
+              <div style={{fontSize:11, color:B.inkLight, marginTop:6}}>⚠️ Historical averages only. Past performance ≠ future results.</div>
             </div>
 
             <div style={{...cardStyle, display:"flex", justifyContent:"space-around"}}>
@@ -656,7 +663,7 @@ export default function NovusIn() {
             </div>
 
             <div style={{background:B.goldBg, borderRadius:12, padding:13, border:`1px solid ${B.gold}33`, fontSize:12, color:B.inkLight, lineHeight:1.6}}>
-              ⚠️ <strong style={{color:B.goldDim}}>Disclaimer:</strong> Educational only. Not financial advice. Consult a licensed advisor in {region.name} before investing.
+              ⚠️ <strong style={{color:B.goldDim}}>Disclaimer:</strong> For education only — not financial advice. Consult a licensed advisor in {region.name} before investing.
             </div>
           </div>
         )}
@@ -699,7 +706,7 @@ export default function NovusIn() {
           <div style={{padding:18, display:"flex", flexDirection:"column", gap:14}}>
             <div style={{...labelStyle}}>Financial Education for Working Adults</div>
             {[
-              {emoji:"⛓️", title:"Pay Off Debt First", tag:"Priority #1", tagColor:B.danger, body:"High-interest debt (18-25%) costs more than investing earns. Paying off a credit card at 20% APR is like a guaranteed 20% return — better than the stock market.\n\nUse the avalanche method: pay minimums on all debts, then throw every extra dollar at the highest-interest one first."},
+              {emoji:"⛓️", title:"Pay Off Debt First", tag:"Priority #1", tagColor:B.danger, body:"High-interest debt (18-25%) costs more than investing earns. Paying off a credit card at 20% APR is like a historically observed 20% return — better than the stock market.\n\nUse the avalanche method: pay minimums on all debts, then throw every extra dollar at the highest-interest one first."},
               {emoji:"🛡️", title:"Build Your Emergency Fund", tag:"Foundation", tagColor:B.success, body:"Before investing aggressively, save 1-3 months of expenses in a savings account. This stops you from selling investments during emergencies and going back into debt.\n\nStart with just 1 month's expenses as your first milestone."},
               {emoji:"📅", title:"Dollar-Cost Averaging", tag:"Core Strategy", tagColor:B.blue, body:"Invest a fixed amount every month regardless of market conditions. When prices drop, you buy more shares. When they rise, your shares grow.\n\nThis works perfectly with a monthly salary. Automate it and stop worrying about timing the market."},
               {emoji:"⏳", title:"Compound Growth — Start Now", tag:"Why Time Matters", tagColor:B.goldDim, body:`Investing ${region.symbol}200/month at 10%/year:\n• 10 years → ~${region.symbol}38,000\n• 20 years → ~${region.symbol}137,000\n• 30 years → ~${region.symbol}395,000\n\nYou only contributed ${region.symbol}72,000. The rest is compound growth. Starting today beats starting later with more money.`},
@@ -739,4 +746,3 @@ export default function NovusIn() {
     </div>
   );
 }
-
