@@ -297,7 +297,7 @@ export default function NovusIn() {
 
   const handleRegionSelect = (r) => {
     setRegion(r);
-    setMessages([{role:"ai", text:`${r.flag} Welcome to **NovusIn**! 🌱 I'm set up for **${r.name}** — all suggestions use **${r.currency}** and local platforms.\n\n*"Your guide to smarter investing decisions."*\n\nSet your goal in the Goals tab, then come back to chat!\n\n🌱 Education only · Not financial advice · Always do your own research.`}]);
+    setMessages([{role:"ai", text:`${r.flag} Welcome to **NovusIn**! 🌱 I'm your AI investing coach, set up for **${r.name}** — all suggestions use **${r.currency}** and local platforms.\n\n*"Your guide to smarter investing decisions."*\n\nSet your goal in the Goals tab, then come back to chat!\n\n🌱 Education only · Not financial advice · Always do your own research.`}]);
   };
 
   // Set page title
@@ -337,16 +337,62 @@ export default function NovusIn() {
   });
   const projectedFinal = yearlySamples[yearlySamples.length-1];
 
-  const sendChat = () => {
-    if (!chatInput.trim()) return;
+  const sendChat = async () => {
+    if (!chatInput.trim() || typing) return;
     const txt = chatInput.trim(); setChatInput("");
-    setMessages(m=>[...m,{role:"user",text:txt}]);
+    const userMsg = {role:"user", text:txt};
+    setMessages(m=>[...m, userMsg]);
     setTyping(true);
-    setTimeout(()=>{
+
+    // Build conversation history for Claude
+    const allMessages = [...messages, userMsg];
+    const claudeMessages = allMessages.map(m => ({
+      role: m.role === "ai" ? "assistant" : "user",
+      content: m.text
+    }));
+
+    // System prompt with full context about the user
+    const systemPrompt = `You are NovusIn, an expert investing coach for beginners. You are friendly, clear, and always practical.
+
+The user's current context:
+- Region: ${region.name} (${region.currency})
+- Goal: ${goalName} — target ${fmt(goalAmount)} in ${goalYears} years
+- Monthly investing budget: ${fmt(monthlyBudget)}/month
+- Already saved: ${fmt(savedSoFar)}
+- Risk profile: ${risk}
+- Recommended platforms in their region: ${region.platforms.filter(p=>p.star).map(p=>p.name).join(', ')}
+
+Your rules:
+1. Always give specific, helpful answers based on THEIR context above
+2. Use their local currency (${region.currency} / ${region.symbol})
+3. Recommend platforms available in ${region.name}
+4. Be encouraging but realistic — use real numbers and timeframes
+5. Always end with a one-line reminder that this is education, not financial advice
+6. Keep responses concise — 3-5 short paragraphs max
+7. Use simple language — no jargon without explanation
+8. If asked about projections, calculate using their actual monthly budget of ${fmt(monthlyBudget)}/month`;
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: claudeMessages
+        })
+      });
+
+      const data = await response.json();
+      const aiText = data.content?.[0]?.text || "Sorry, I couldn't process that. Please try again!";
       setTyping(false);
-      setMessages(m=>[...m,{role:"ai",text:getAIReply(txt,{monthly:monthlyBudget},region)}]);
-      setTimeout(()=>chatEndRef.current?.scrollIntoView({behavior:"smooth"}),50);
-    },1100);
+      setMessages(m=>[...m, {role:"ai", text:aiText}]);
+    } catch (err) {
+      setTyping(false);
+      setMessages(m=>[...m, {role:"ai", text:"Sorry, I'm having trouble connecting right now. Please try again in a moment! 🌱"}]);
+    }
+    setTimeout(()=>chatEndRef.current?.scrollIntoView({behavior:"smooth"}),100);
   };
 
   const renderMd = (t) => t
