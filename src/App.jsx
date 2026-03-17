@@ -385,7 +385,7 @@ Your rules:
       const data = await response.json();
       if (!response.ok) {
         setTyping(false);
-        setMessages(m=>[...m, {role:"ai", text:`API Error ${response.status}: ${data.error || JSON.stringify(data)}`}]);
+        setMessages(m=>[...m, {role:"ai", text:"Sorry, I'm having a moment. Please try again! 🌱"}]);
         return;
       }
       const aiText = data.text || "Sorry, I couldn't process that. Please try again!";
@@ -393,7 +393,7 @@ Your rules:
       setMessages(m=>[...m, {role:"ai", text:aiText}]);
     } catch (err) {
       setTyping(false);
-      setMessages(m=>[...m, {role:"ai", text:`Debug error: ${err.message} | Status: ${err.status || 'unknown'}`}]);
+      setMessages(m=>[...m, {role:"ai", text:"Sorry, I'm having trouble connecting right now. Please try again in a moment! 🌱"}]);
     }
     setTimeout(()=>chatEndRef.current?.scrollIntoView({behavior:"smooth"}),100);
   };
