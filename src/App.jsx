@@ -245,7 +245,7 @@ function Onboarding({onSelect}) {
             <LogoIcon size={72} dark={true}/>
           </div>
           <div style={{fontSize:32, fontWeight:700, color:B.white, letterSpacing:"-0.5px"}}>
-            Novus<span style={{color:B.gold, fontWeight:400}}>In</span>
+            Novus<span style={{color:B.gold, fontWeight:400}}>In</span><span style={{fontSize:"0.45em", verticalAlign:"super", color:B.steel, fontWeight:400, letterSpacing:0}}>™</span>
           </div>
           <div style={{fontSize:11, color:B.gold, textTransform:"uppercase", letterSpacing:"0.15em", fontFamily:"monospace", marginTop:6}}>New Investor Coach</div>
           <div style={{fontSize:13, color:B.steel, marginTop:14, lineHeight:1.7, fontStyle:"italic"}}>"The new investor's coach."</div>
@@ -360,7 +360,7 @@ export default function NovusIn() {
           <LogoIcon size={32} dark={true}/>
           <div>
             <div style={{fontSize:18, fontWeight:700, color:B.white, letterSpacing:"-0.5px"}}>
-              Novus<span style={{color:B.gold, fontWeight:400}}>In</span>
+              Novus<span style={{color:B.gold, fontWeight:400}}>In</span><span style={{fontSize:"0.45em", verticalAlign:"super", color:B.steel, fontWeight:400, letterSpacing:0}}>™</span>
             </div>
             <div style={{fontSize:9, color:B.steel, letterSpacing:"0.12em", textTransform:"uppercase", fontFamily:"monospace"}}>New Investor Coach</div>
           </div>
@@ -739,3 +739,4 @@ export default function NovusIn() {
     </div>
   );
 }
+
