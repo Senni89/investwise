@@ -383,12 +383,17 @@ Your rules:
       });
 
       const data = await response.json();
+      if (!response.ok) {
+        setTyping(false);
+        setMessages(m=>[...m, {role:"ai", text:`API Error ${response.status}: ${data.error || JSON.stringify(data)}`}]);
+        return;
+      }
       const aiText = data.text || "Sorry, I couldn't process that. Please try again!";
       setTyping(false);
       setMessages(m=>[...m, {role:"ai", text:aiText}]);
     } catch (err) {
       setTyping(false);
-      setMessages(m=>[...m, {role:"ai", text:"Sorry, I'm having trouble connecting right now. Please try again in a moment! 🌱"}]);
+      setMessages(m=>[...m, {role:"ai", text:`Debug error: ${err.message} | Status: ${err.status || 'unknown'}`}]);
     }
     setTimeout(()=>chatEndRef.current?.scrollIntoView({behavior:"smooth"}),100);
   };
