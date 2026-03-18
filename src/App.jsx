@@ -285,6 +285,7 @@ export default function NovusIn() {
   const [goalType, setGoalType]           = useState("house");
   const [goalName, setGoalName]           = useState("Buy a House");
   const [fullPrice, setFullPrice]         = useState(300000);
+  const [dpPctOverride, setDpPctOverride] = useState(null); // null = use preset default
   const [savedSoFar, setSavedSoFar]       = useState(0);
   const [monthlyBudget, setMonthlyBudget] = useState(300);
   const [risk, setRisk]                   = useState("moderate");
@@ -310,8 +311,8 @@ export default function NovusIn() {
   if (!region) return <Onboarding onSelect={handleRegionSelect}/>;
 
   const preset = GOAL_PRESETS.find(p=>p.id===goalType) || GOAL_PRESETS[2];
-  const dpPct = preset.dpPct;
-  const dpLabel = goalType==="house" ? "35% down payment" : goalType==="car" ? "20% down payment" : "Full amount";
+  const dpPct = dpPctOverride !== null ? dpPctOverride : preset.dpPct;
+  const dpLabel = (goalType==="house" || goalType==="car") ? `${Math.round(dpPct*100)}% down payment` : "Full amount";
   const goalAmount = Math.round(fullPrice * dpPct);
   const remaining = Math.max(0, goalAmount - savedSoFar);
   const progressPct = goalAmount > 0 ? Math.min(100,(savedSoFar/goalAmount)*100) : 0;
@@ -479,13 +480,23 @@ Your rules:
               </div>
 
               {(goalType==="house"||goalType==="car") && (
-                <div style={{padding:"12px 14px", borderRadius:10, background:`${preset.color}10`, border:`1px solid ${preset.color}30`, marginBottom:14}}>
-                  <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-                    <div>
-                      <div style={{fontSize:12, color:B.inkLight}}>{dpLabel} required</div>
-                      <div style={{fontSize:11, color:B.inkLight, marginTop:2}}>{goalType==="house"?"35% down = better mortgage rates & no PMI":"20% down = avoid being underwater on your loan"}</div>
-                    </div>
-                    <div style={{fontSize:24, fontWeight:700, color:preset.color}}>{fmt(goalAmount)}</div>
+                <div style={{padding:"14px", borderRadius:10, background:`${preset.color}10`, border:`1px solid ${preset.color}30`, marginBottom:14}}>
+                  <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10}}>
+                    <div style={{fontSize:13, color:B.inkLight, fontWeight:600}}>Down payment %</div>
+                    <div style={{fontSize:22, fontWeight:700, color:preset.color}}>{fmt(goalAmount)}</div>
+                  </div>
+                  <input type="range" min={5} max={50} step={1}
+                    value={Math.round(dpPct*100)}
+                    onChange={e=>setDpPctOverride(Number(e.target.value)/100)}
+                    style={{width:"100%", accentColor:preset.color, marginBottom:6}}/>
+                  <div style={{display:"flex", justifyContent:"space-between", fontSize:11, color:B.inkLight, marginBottom:6}}>
+                    <span>5%</span><span>10%</span><span>20%</span><span>35%</span><span>50%</span>
+                  </div>
+                  <div style={{fontSize:12, color:B.inkLight}}>
+                    <span style={{fontWeight:600, color:preset.color}}>{Math.round(dpPct*100)}% down</span> = {fmt(goalAmount)} needed
+                    {dpPct>=0.20 && goalType==="house" && <span style={{color:B.success, marginLeft:8}}>✓ Avoids PMI</span>}
+                    {dpPct<0.10 && <span style={{color:B.danger, marginLeft:8}}>⚠️ Low — may need strong credit</span>}
+                    {dpPct>=0.20 && goalType==="car" && <span style={{color:B.success, marginLeft:8}}>✓ Safe equity position</span>}
                   </div>
                 </div>
               )}
