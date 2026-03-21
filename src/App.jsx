@@ -277,7 +277,7 @@ function Onboarding({onSelect}) {
   );
 }
 
-const TABS = ["Goals","Plan","Invest","Chat","Learn"];
+const TABS = ["Goals","Plan","Invest","Chat","Learn","Journey"];
 
 export default function NovusIn() {
   const [region, setRegion]               = useState(null);
@@ -285,7 +285,12 @@ export default function NovusIn() {
   const [goalType, setGoalType]           = useState("house");
   const [goalName, setGoalName]           = useState("Buy a House");
   const [fullPrice, setFullPrice]         = useState(300000);
-  const [dpPctOverride, setDpPctOverride] = useState(null); // null = use preset default
+  const [dpPctOverride, setDpPctOverride] = useState(null);
+  const [completedDays, setCompletedDays] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('novusin_journey') || '[]'); }
+    catch { return []; }
+  });
+  const [expandedDay, setExpandedDay] = useState(null); // null = use preset default
   const [savedSoFar, setSavedSoFar]       = useState(0);
   const [monthlyBudget, setMonthlyBudget] = useState(300);
   const [risk, setRisk]                   = useState("moderate");
@@ -307,6 +312,14 @@ export default function NovusIn() {
       ? `NovusIn™ · ${region.name}`
       : "NovusIn™ — Your New Investor Coach";
   }, [region]);
+
+  // Save journey progress
+  const completeDay = (dayNum) => {
+    if (completedDays.includes(dayNum)) return;
+    const updated = [...completedDays, dayNum];
+    setCompletedDays(updated);
+    try { localStorage.setItem('novusin_journey', JSON.stringify(updated)); } catch {}
+  };
 
   if (!region) return <Onboarding onSelect={handleRegionSelect}/>;
 
@@ -794,6 +807,288 @@ Your rules:
           </div>
         )}
 
+        {/* ══ JOURNEY TAB ══ */}
+        {tab === "Journey" && (() => {
+          const totalDays = 28;
+          const streak = completedDays.length;
+          const pct = Math.round((streak / totalDays) * 100);
+
+          const weeks = [
+            {
+              week: 1, title: "Know Your Why", emoji: "🌱", color: "#10b981",
+              days: [
+                { day: 1, title: "Set Your First Goal", type: "action",
+                  lesson: "Every investor starts with a WHY. A clear goal is the difference between saving with purpose and saving by accident. You've already set yours in the Goals tab — that puts you ahead of 90% of people.",
+                  action: "Go to Goals tab and confirm your goal is set. What's the full price and your monthly budget?",
+                  quiz: null },
+                { day: 2, title: "What Is Investing?", type: "lesson",
+                  lesson: "Investing means putting your money to work so it grows over time. When you invest $300/month at a 10% historical average return, you're not just saving — you're letting compound growth multiply your money. A savings account gives you ~1%. Investing historically gives ~10%/year.",
+                  action: null,
+                  quiz: { q: "What's the main advantage of investing over a savings account?", options: ["Higher risk", "Historical returns of ~10%/yr vs ~1%", "You can spend it anytime", "Banks recommend it"], answer: 1 }},
+                { day: 3, title: "The Magic of Compound Growth", type: "lesson",
+                  lesson: `$${Math.round((300 * 12 * 10))} contributed over 10 years at 10%/yr becomes roughly $61,000. You put in $36,000 — the market added $25,000 for free. That's compound growth: your returns earn returns. Einstein called it the 8th wonder of the world.`,
+                  action: "Go to Plan tab and look at the projection chart. How much will investing add on top of what you contribute?",
+                  quiz: null },
+                { day: 4, title: "Investor vs. Trader — Which Are You?", type: "quiz",
+                  lesson: "A trader tries to buy low and sell high — timing the market. Studies show 80% of traders lose money long-term. An investor buys and holds — letting time and compound growth do the work. NovusIn is built for investors, not traders.",
+                  action: null,
+                  quiz: { q: "Which approach does NovusIn recommend for beginners?", options: ["Active trading", "Crypto speculation", "Long-term investing", "Day trading"], answer: 2 }},
+                { day: 5, title: "Your Money Mindset", type: "lesson",
+                  lesson: "The biggest enemy of investing isn't the market — it's your emotions. Fear makes you sell when prices drop (locking in losses). Greed makes you chase hot stocks (buying high). The antidote: automate your investing so emotions can't interfere. Set it, forget it, grow.",
+                  action: "Write down 3 things you'll buy or do once you reach your goal. Keep this somewhere visible.",
+                  quiz: null },
+                { day: 6, title: "The Cost of Waiting", type: "quiz",
+                  lesson: "Waiting one year to start investing costs you more than you think. If you invest $300/month for 30 years at 10%: $678,000. Start one year later: $618,000. That one year of waiting cost you $60,000 — not $3,600. Time is your most powerful asset.",
+                  action: null,
+                  quiz: { q: "Why does starting early matter so much?", options: ["Markets are safer early", "Compound growth needs time to accelerate", "Fees are lower", "You get better stock picks"], answer: 1 }},
+                { day: 7, title: "Week 1 Complete! 🎉", type: "milestone",
+                  lesson: "You've built your foundation. You know WHY you're investing, what compound growth means, and why starting now beats starting later. You're already ahead of most people who just talk about investing but never start.",
+                  action: "Share your goal with one person — a friend, partner, or family member. Saying your goal out loud makes it more real.",
+                  quiz: null },
+              ]
+            },
+            {
+              week: 2, title: "Learn the Tools", emoji: "🛠️", color: "#60a5fa",
+              days: [
+                { day: 8, title: "What Is an Index Fund?", type: "lesson",
+                  lesson: "An index fund owns tiny pieces of hundreds of companies at once. Instead of picking one stock (risky), you own the whole market (diversified). VOO tracks the S&P 500 — the 500 biggest US companies. Historically it's returned ~10%/year over the long term. It's the most recommended investment for beginners by Warren Buffett himself.",
+                  action: "Go to the Invest tab and look at the funds recommended for your region and risk level.",
+                  quiz: null },
+                { day: 9, title: "Stocks vs ETFs vs Bonds", type: "quiz",
+                  lesson: "Stock = owning one company (higher risk, higher reward). ETF = owning hundreds of companies (diversified, lower risk). Bond = lending money to a government or company (very stable, lower return ~4-5%/yr). Most beginners should start with ETFs, add bonds for stability, and only buy individual stocks once they understand what they're doing.",
+                  action: null,
+                  quiz: { q: "Which investment is most diversified for a beginner?", options: ["Single stock", "Crypto", "ETF/Index Fund", "Bond"], answer: 2 }},
+                { day: 10, title: "Understanding Risk", type: "lesson",
+                  lesson: "Risk and return are linked — higher potential return always means higher potential loss. Your timeline determines your risk level. Less than 3 years to goal? Keep it safe (savings + bonds). 3-7 years? Balanced mix. 7+ years? You can afford more growth-focused funds because you have time to recover from dips.",
+                  action: "Check your risk setting in the Invest tab. Does it match your timeline?",
+                  quiz: null },
+                { day: 11, title: "Dollar-Cost Averaging", type: "quiz",
+                  lesson: "DCA means investing the same amount every month regardless of market conditions. When prices drop, you automatically buy more shares. When prices rise, your existing shares are worth more. This removes emotion from investing and has outperformed most 'timing' strategies over the long run.",
+                  action: null,
+                  quiz: { q: "What does Dollar-Cost Averaging (DCA) mean?", options: ["Buy when markets are low", "Invest a fixed amount regularly", "Trade daily", "Only buy US stocks"], answer: 1 }},
+                { day: 12, title: "Platforms in Your Region", type: "action",
+                  lesson: `In ${region?.name || 'your region'}, the top platforms for beginners are ${region?.platforms.filter(p=>p.star).map(p=>p.name).join(' and ')}. They're free to open, have no minimums, and let you buy fractional shares — meaning you can invest $10 in a $400 stock.`,
+                  action: `Visit ${region?.platforms[0]?.name || 'your recommended platform'}'s website today. Just browse — don't sign up yet. Get comfortable with what it looks like.`,
+                  quiz: null },
+                { day: 13, title: "Fees Are the Silent Killer", type: "lesson",
+                  lesson: "A 1% annual fee sounds small. On $100,000 over 20 years, it costs you $30,000 in lost growth. Always check the expense ratio of any fund. Index funds like VOO charge ~0.03%/year. Actively managed funds often charge 1%+ and statistically underperform index funds anyway.",
+                  action: null,
+                  quiz: null },
+                { day: 14, title: "Week 2 Complete! 🎉", type: "milestone",
+                  lesson: "You now know more about investing than most adults. Index funds, risk levels, DCA, fees, platforms — you've got the full toolkit. Next week we turn knowledge into your actual plan.",
+                  action: "Ask the AI coach one question you still have about investing. It knows your goal and region.",
+                  quiz: null },
+              ]
+            },
+            {
+              week: 3, title: "Build Your Plan", emoji: "📋", color: "#f59e0b",
+              days: [
+                { day: 15, title: "Your NovusIn Plan", type: "action",
+                  lesson: "You already have a personalized plan built in the Plan tab. It tells you exactly how much to invest monthly, how long to reach your goal, and what your money will grow to. This isn't generic advice — it's built around your actual numbers.",
+                  action: "Go to Plan tab. Screenshot your plan. This is your investing roadmap.",
+                  quiz: null },
+                { day: 16, title: "The 50/30/20 Budget Rule", type: "quiz",
+                  lesson: "50% of income → Needs (rent, food, bills). 30% → Wants (dining, entertainment). 20% → Savings & investing. If 20% feels impossible, start with 5% and increase by 1% every 3 months. Even $50/month invested consistently beats $500 invested once.",
+                  action: null,
+                  quiz: { q: "In the 50/30/20 rule, what percentage goes to savings?", options: ["10%", "30%", "20%", "50%"], answer: 2 }},
+                { day: 17, title: "Automating Your Investing", type: "lesson",
+                  lesson: "The #1 investing habit: automate it. Set up automatic transfers on payday so money goes straight to investing before you can spend it. This is called 'paying yourself first.' You'll never miss money you never saw. Every major brokerage lets you set up automatic monthly investments.",
+                  action: "Decide: which day of the month will you auto-invest? Payday is best.",
+                  quiz: null },
+                { day: 18, title: "What to Do When Markets Drop", type: "quiz",
+                  lesson: "Markets drop — it's guaranteed. S&P 500 drops 10%+ once per year on average. 20%+ drops happen every 3-5 years. Every single time it has fully recovered. The investors who lost money were those who panic-sold during drops. The ones who held on — or bought more — came out ahead.",
+                  action: null,
+                  quiz: { q: "What should you do when the market drops 20%?", options: ["Sell everything", "Panic", "Hold or buy more", "Switch to crypto"], answer: 2 }},
+                { day: 19, title: "Rebalancing Your Portfolio", type: "lesson",
+                  lesson: "Over time, some investments grow faster than others and your allocation drifts. Rebalancing means selling a little of what grew and buying more of what didn't to maintain your target allocation. Most beginners only need to rebalance once per year.",
+                  action: "Check your Invest tab allocation. Does it match your risk comfort?",
+                  quiz: null },
+                { day: 20, title: "Tax-Advantaged Accounts", type: "lesson",
+                  lesson: `${region?.taxNote || 'Using the right account wrapper can save you significant money in taxes over time. Check what tax-advantaged accounts are available in your region.'}`,
+                  action: "Ask the AI coach: 'What tax accounts should I use in my region?'",
+                  quiz: null },
+                { day: 21, title: "Week 3 Complete! 🎉", type: "milestone",
+                  lesson: "Your plan is built. You know how to budget, automate, handle market drops, and minimize taxes. You're not just learning — you're ready to invest. One more week and you'll have everything to take action.",
+                  action: "Tell someone about your plan. Accountability doubles your chance of following through.",
+                  quiz: null },
+              ]
+            },
+            {
+              week: 4, title: "Take Action", emoji: "🚀", color: "#f87171",
+              days: [
+                { day: 22, title: "Open Your Brokerage Account", type: "action",
+                  lesson: `Today is the day. Opening an account takes about 10 minutes. You'll need your ID and bank details. ${region?.platforms.filter(p=>p.star).map(p=>p.name).join(' and ')} are free to open with no minimums. You don't need to invest anything yet — just open the account.`,
+                  action: `Visit ${region?.platforms[0]?.name || 'your recommended platform'} and start the sign-up. You can always stop and come back — but start.`,
+                  quiz: null },
+                { day: 23, title: "Your First Investment", type: "action",
+                  lesson: "Your first investment doesn't have to be big. Even $10 makes it real. What matters is the habit. Look up the first fund in your recommended allocation from the Invest tab. Search for it on your platform. Buy whatever amount you're comfortable with — even $10 is a real investment.",
+                  action: "Buy your first investment — any amount. Screenshot it. This is historic for you.",
+                  quiz: null },
+                { day: 24, title: "Set Up Auto-Invest", type: "action",
+                  lesson: "Now that your account is open, set up automatic monthly investing. Choose the amount from your Plan tab and set the date to your payday. This single step does more for your financial future than any stock tip ever could.",
+                  action: "Set up automatic monthly investing on your platform. Done? You're officially an investor.",
+                  quiz: null },
+                { day: 25, title: "Common Beginner Mistakes", type: "quiz",
+                  lesson: "1. Checking your portfolio every day (causes emotional decisions). 2. Panic selling in dips (locks in losses). 3. Chasing trending stocks (buying high). 4. Stopping contributions when markets drop (missing the best buying opportunities). 5. Waiting for the 'perfect time' (it doesn't exist).",
+                  action: null,
+                  quiz: { q: "Which is NOT a beginner mistake?", options: ["Panic selling", "Automating monthly investments", "Checking portfolio daily", "Chasing hot stocks"], answer: 1 }},
+                { day: 26, title: "Staying the Course", type: "lesson",
+                  lesson: "The hardest part of investing isn't picking investments — it's doing nothing when your brain screams to act. Your job now is simple: keep contributing monthly, don't panic sell, check in once a year. That's it. Time and compound growth do the rest.",
+                  action: "Set a calendar reminder for one year from now: 'NovusIn Annual Check-in'. That's when you review your plan.",
+                  quiz: null },
+                { day: 27, title: "Share Your Journey", type: "action",
+                  lesson: "You've come further in 27 days than most people do in their entire lives. You have a goal, a plan, an account, and your first investment. That's not nothing — that's everything.",
+                  action: "Share novusin.com with one person who needs this. Your journey could start theirs.",
+                  quiz: null },
+                { day: 28, title: "🏆 Journey Complete!", type: "celebration",
+                  lesson: "28 days ago you were a beginner. Today you're an investor with a real plan, a real account, and a real investment growing toward your real goal. NovusIn didn't do that — YOU did. Keep going. Check back in a month and see your progress.",
+                  action: "You've completed the NovusIn 28-Day Investor Journey. Share your achievement!",
+                  quiz: null },
+              ]
+            }
+          ];
+
+          const allDays = weeks.flatMap(w => w.days);
+
+          return (
+            <div style={{padding:18, display:"flex", flexDirection:"column", gap:16}}>
+
+              {/* Progress Header */}
+              <div style={{background:`linear-gradient(135deg, #0d2818, #0f1117)`, borderRadius:16, padding:20, border:`1px solid ${B.gold}`}}>
+                <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:12}}>
+                  <div>
+                    <div style={{fontSize:18, fontWeight:700, color:B.gold}}>🗓️ 28-Day Investor Journey</div>
+                    <div style={{fontSize:12, color:B.inkLight, marginTop:2}}>Your personal path from beginner to investor</div>
+                  </div>
+                  <div style={{textAlign:"right"}}>
+                    <div style={{fontSize:28, fontWeight:700, color:B.gold}}>{streak}<span style={{fontSize:14, color:B.inkLight}}>/28</span></div>
+                    <div style={{fontSize:11, color:B.inkLight}}>days done</div>
+                  </div>
+                </div>
+                {/* Progress bar */}
+                <div style={{height:8, borderRadius:4, background:B.border, overflow:"hidden"}}>
+                  <div style={{height:"100%", width:`${pct}%`, borderRadius:4, background:`linear-gradient(90deg, #10b981, #34d399)`, transition:"width 0.5s ease"}}/>
+                </div>
+                <div style={{display:"flex", justifyContent:"space-between", fontSize:11, color:B.inkLight, marginTop:4}}>
+                  <span>{pct}% complete</span>
+                  <span>{28 - streak} days remaining</span>
+                </div>
+                {streak === 28 && (
+                  <div style={{marginTop:12, padding:"10px 14px", background:"#10b98122", borderRadius:10, textAlign:"center", fontSize:14, color:B.gold, fontWeight:600}}>
+                    🏆 Journey Complete! You're an investor!
+                  </div>
+                )}
+              </div>
+
+              {/* Weeks */}
+              {weeks.map(week => {
+                const weekDone = week.days.filter(d => completedDays.includes(d.day)).length;
+                return (
+                  <div key={week.week} style={{background:B.navyLight, borderRadius:14, border:`1px solid ${B.border}`, overflow:"hidden"}}>
+                    {/* Week header */}
+                    <div style={{padding:"12px 16px", background:`${week.color}15`, borderBottom:`1px solid ${week.color}30`, display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                      <div style={{display:"flex", alignItems:"center", gap:10}}>
+                        <span style={{fontSize:22}}>{week.emoji}</span>
+                        <div>
+                          <div style={{fontSize:13, fontWeight:700, color:week.color}}>Week {week.week}: {week.title}</div>
+                          <div style={{fontSize:11, color:B.inkLight}}>Days {(week.week-1)*7+1}–{week.week*7}</div>
+                        </div>
+                      </div>
+                      <div style={{fontSize:12, color:week.color, fontWeight:600}}>{weekDone}/7</div>
+                    </div>
+
+                    {/* Days */}
+                    <div style={{display:"flex", flexDirection:"column"}}>
+                      {week.days.map((day, i) => {
+                        const done = completedDays.includes(day.day);
+                        const isExpanded = expandedDay === day.day;
+                        const prevDone = day.day === 1 || completedDays.includes(day.day - 1);
+                        const locked = !prevDone && !done;
+
+                        return (
+                          <div key={day.day} style={{borderBottom: i < week.days.length-1 ? `1px solid ${B.border}` : "none"}}>
+                            {/* Day row */}
+                            <div
+                              onClick={() => !locked && setExpandedDay(isExpanded ? null : day.day)}
+                              style={{padding:"12px 16px", display:"flex", alignItems:"center", gap:12, cursor:locked?"default":"pointer", opacity:locked?0.4:1}}>
+                              {/* Day status circle */}
+                              <div style={{width:32, height:32, borderRadius:"50%", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14,
+                                background: done ? "#10b981" : locked ? B.border : `${week.color}20`,
+                                border: done ? "none" : `2px solid ${locked ? B.border : week.color}`,
+                                color: done ? "#fff" : locked ? B.inkLight : week.color, fontWeight:700}}>
+                                {done ? "✓" : day.day}
+                              </div>
+                              <div style={{flex:1}}>
+                                <div style={{fontSize:13, fontWeight:600, color: done ? B.inkLight : B.ink}}>{day.title}</div>
+                                <div style={{fontSize:11, color:B.inkLight, marginTop:1}}>
+                                  {day.type === "quiz" ? "📝 Quiz" : day.type === "action" ? "✅ Action" : day.type === "milestone" ? "🎉 Milestone" : day.type === "celebration" ? "🏆 Complete" : "📖 Lesson"}
+                                  {locked && " · Complete previous day first"}
+                                </div>
+                              </div>
+                              {!locked && <span style={{color:B.inkLight, fontSize:12}}>{isExpanded ? "▲" : "▼"}</span>}
+                            </div>
+
+                            {/* Expanded content */}
+                            {isExpanded && (
+                              <div style={{padding:"0 16px 16px 60px"}}>
+                                {/* Lesson */}
+                                <div style={{fontSize:13, color:B.inkLight, lineHeight:1.75, marginBottom:12, padding:"12px 14px", background:B.navy, borderRadius:10, border:`1px solid ${B.border}`}}>
+                                  {day.lesson}
+                                </div>
+
+                                {/* Quiz */}
+                                {day.quiz && !done && (
+                                  <div style={{marginBottom:12}}>
+                                    <div style={{fontSize:13, fontWeight:600, color:B.ink, marginBottom:8}}>🧠 {day.quiz.q}</div>
+                                    {day.quiz.options.map((opt, oi) => (
+                                      <button key={oi} onClick={() => {
+                                        if (oi === day.quiz.answer) completeDay(day.day);
+                                      }} style={{display:"block", width:"100%", textAlign:"left", padding:"10px 14px", marginBottom:6, borderRadius:8,
+                                        border:`1px solid ${B.border}`, background:B.navyLight, color:B.ink, fontSize:13, cursor:"pointer", fontFamily:"inherit"}}>
+                                        {["A","B","C","D"][oi]}. {opt}
+                                      </button>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Action */}
+                                {day.action && (
+                                  <div style={{padding:"10px 14px", background:`${week.color}12`, borderRadius:10, border:`1px solid ${week.color}30`, marginBottom:12}}>
+                                    <div style={{fontSize:12, color:week.color, fontWeight:600, marginBottom:4}}>Today's Action:</div>
+                                    <div style={{fontSize:13, color:B.inkLight, lineHeight:1.6}}>{day.action}</div>
+                                  </div>
+                                )}
+
+                                {/* Complete button */}
+                                {!done && (
+                                  <button onClick={() => completeDay(day.day)} style={{
+                                    width:"100%", padding:"12px", borderRadius:10,
+                                    background:`linear-gradient(135deg, ${week.color}, ${week.color}cc)`,
+                                    border:"none", color:"#fff", fontSize:14, fontWeight:700, cursor:"pointer", fontFamily:"inherit"}}>
+                                    {day.type === "quiz" ? "Skip Quiz & Mark Done" : "✓ Mark Day Complete"}
+                                  </button>
+                                )}
+                                {done && (
+                                  <div style={{textAlign:"center", fontSize:13, color:B.success, fontWeight:600, padding:"10px"}}>
+                                    ✓ Completed! Keep going 🌱
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
+              <div style={{fontSize:11, color:B.inkLight, textAlign:"center", lineHeight:1.6, padding:"0 10px"}}>
+                🌱 NovusIn™ Journey · Education only · Not financial advice
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       <style>{`
